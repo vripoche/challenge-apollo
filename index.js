@@ -34,12 +34,12 @@ const typeDefs = gql`
 
   # This "Book" type can be used in other type declarations.
   type Restaurant {
-		id: Int,
+		id: Int!,
     name: String
   }
 
 	type Review {
-		id: Int,
+		id: Int!,
 		restaurantId: Int,
 		content: String,
 	}
@@ -50,8 +50,12 @@ const typeDefs = gql`
     restaurants: [Restaurant],
 		reviews: [Review]
   }
+	type Mutation {
+ 		addRestaurant(name: String): Restaurant
+	}
 `;
 
+let restaurantNextId = 2
 // Resolvers define the technique for fetching the types in the
 // schema.  We'll retrieve books from the "books" array above.
 const resolvers = {
@@ -59,6 +63,13 @@ const resolvers = {
     restaurants: () => restaurants,
 		reviews: () => reviews
   },
+	Mutation: {
+		addRestaurant: (_, { name }) => {
+      const restaurant = { id: restaurantNextId++, name };
+      restaurants.push(restaurant);
+      return restaurant;
+		}
+	}
 };
 
 // In the most basic sense, the ApolloServer can be started
